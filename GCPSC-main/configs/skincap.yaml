@@ -1,0 +1,98 @@
+# GCPSC core-loss model: SkinCAP (caption + image, 50% MCAR image missingness)
+
+dataset: skincap
+
+# ---- data
+dataset_root: data/skincap_hybrid
+image_root: E:/Dc/datasets--joshuachou--SkinCAP/snapshots/4119044b3e14085d7439f88016d93376d433da5f/skincap
+train_csv: skincap_50_train_set.csv
+val_csv: skincap_50_val_set.csv
+test_csv: skincap_50_test_set.csv
+caption_column: caption_hybrid_en
+caption_max_length: 128
+clinical_text_dropout: 0.1
+train_missing_rate: 0.5
+val_missing_rate: 0.5
+test_missing_rates: [0.0, 0.25, 0.5, 0.75]
+missing_mask_seed: 42
+guideline_path: guideline/deepseek_skincap50.jsonl
+num_classes: 50
+availability_group_names:
+  present: image_present
+  missing: image_missing
+expert_display_names: [caption, image, fusion]
+
+# ---- shared architecture
+embed_dim: 768
+image_res: 224
+image_pretrained: true
+completion_hidden_dim: 512
+completion_logvar_min: -6.0
+completion_logvar_max: 2.0
+router_context_dim: 64
+router_hidden_dim: 256
+router_dropout: 0.1
+uncertainty_hidden_dim: 128
+ehr_linear_logit_weight: 0.5
+
+# ---- routing and completion reliability (carried over from an earlier search
+
+router_temperature: 1.0
+router_uncertainty_penalty: 0.5
+completion_reliability_temperature: 0.25
+completion_reliability_uncertainty_scale: 0.022201983258128166
+completion_reliability_strength: 0.1
+completion_reliability_floor: 0.5
+completion_reliability_fusion_power: 0.5
+completion_reliability_eps: 1.0e-06
+
+# ---- knowledge text (frozen ClinicalBERT; features cached once)
+bert_model_name: E:/Dc/ptm/ClinicalBERT_B
+bert_local_files_only: true
+label_max_length: 32
+guideline_max_length: 512
+radiology_max_length: 128
+
+# ---- core-loss objective (main BCE weight 1)
+guideline_classification_weight: 0.2
+expert_classification_weight: 0.3
+uncertainty_classification_weight: 0.2
+completion_nll_weight: 0.2  # final: highest SkinCAP validation macro-AUPRC among the non-zero values
+masked_classification_weight: 0.0
+
+
+classification_warmup_epochs: 0
+guidance_warmup_epochs: 0
+
+# ---- optimisation and model selection
+seed: 42
+batch_size: 16
+test_batch_size: 64
+num_workers: 0
+augment: true
+amp: true
+optimizer:
+  lr: 0.0001
+  weight_decay: 0.0001
+schedular:
+  epochs: 100
+  min_lr: 1.0e-06
+ema_decay: 0.999
+ema_start_epoch: 5
+early_stopping_patience: 5
+select_from_joint_stage: true
+use_tqdm: true
+log_interval: 20
+
+# ---- bootstrap CIs on the test pass (enable with --bootstrap)
+bootstrap:
+  enabled: true
+  iterations: 1000
+  confidence_level: 0.95
+  method: "percentile"
+  unit: "sample"
+  seed: 42
+  max_attempt_multiplier: 20
+  show_progress: true
+  metrics: ["macro_auroc", "macro_auprc"]
+  subgroups: ["all"]

@@ -1,0 +1,107 @@
+# GCPSC core-loss model: MIMIC-PAIRED (train/validate on stays with a CXR; test on all stays)
+# FINAL configuration used for the results in the paper (seed 42).
+dataset: mimic_paired
+
+# ---- data
+dataset_root: E:/Dc/datasets_processed/phenotyping
+image_root: E:/datasets/MIMIC-CXR-JPG/resized
+train_ehr_pkl: ehr_phenotyping_48h_train.pkl
+val_ehr_pkl: ehr_phenotyping_48h_val.pkl
+test_ehr_pkl: ehr_phenotyping_48h_test.pkl
+train_listfile: ehr_list_phenotyping_48h_train.csv
+val_listfile: ehr_list_phenotyping_48h_val.csv
+test_listfile: ehr_list_phenotyping_48h_test.csv
+paired_metadata: metas_with_labels_phenotyping_first_48h.pkl
+train_sample_mode: paired
+val_sample_mode: paired
+test_sample_mode: all
+strict_images: false
+verify_labels: true
+guideline_path: guideline/deepseek_mimic25.jsonl
+num_classes: 25
+
+# ---- structured EHR encoder
+ehr_length: 48
+ehr_input_dim: 76
+ehr_hidden_dim: 256
+ehr_num_layers: 1
+ehr_num_heads: 4
+ehr_feedforward_dim: 1024
+ehr_dropout: 0.3
+ehr_input_clip: 10.0
+
+# ---- shared architecture
+embed_dim: 768
+image_res: 224
+image_pretrained: true
+completion_hidden_dim: 512
+completion_logvar_min: -6.0
+completion_logvar_max: 2.0
+router_context_dim: 64
+router_hidden_dim: 256
+router_dropout: 0.1
+uncertainty_hidden_dim: 128
+ehr_linear_logit_weight: 0.5
+
+# ---- routing and completion reliability (carried over from an earlier search
+
+router_temperature: 1.0
+router_uncertainty_penalty: 0.0
+completion_reliability_temperature: 0.25
+completion_reliability_uncertainty_scale: 0.8097166419029236
+completion_reliability_strength: 0.4
+completion_reliability_floor: 0.25
+completion_reliability_fusion_power: 0.5
+completion_reliability_eps: 1.0e-06
+
+# ---- knowledge text (frozen ClinicalBERT; features cached once)
+bert_model_name: E:/Dc/ptm/ClinicalBERT_B
+bert_local_files_only: true
+label_max_length: 32
+guideline_max_length: 512
+radiology_max_length: 128
+
+# ---- core-loss objective (main BCE weight 1)
+guideline_classification_weight: 0.2
+expert_classification_weight: 0.3
+uncertainty_classification_weight: 0.2
+completion_nll_weight: 0.05
+masked_classification_weight: 0.2
+
+# ---- staged schedule: stage 1 = main + expert; stage 2 adds guideline and
+# uncertainty; stage 3 (joint) adds completion NLL and the masked view
+classification_warmup_epochs: 0
+guidance_warmup_epochs: 0
+
+# ---- optimisation and model selection
+seed: 42
+batch_size: 64
+test_batch_size: 128
+num_workers: 0
+augment: true
+amp: true
+optimizer:
+  lr: 0.0001
+  weight_decay: 0.0001
+schedular:
+  epochs: 100
+  min_lr: 1.0e-06
+ema_decay: 0.999
+ema_start_epoch: 10  # zero-based: EMA starts with stage 2
+early_stopping_patience: 5  # counted from the joint stage
+select_from_joint_stage: false
+use_tqdm: true
+log_interval: 50
+
+# ---- bootstrap CIs on the test pass (enable with --bootstrap)
+bootstrap:
+  enabled: true
+  iterations: 1000
+  confidence_level: 0.95
+  method: "percentile"
+  unit: "patient"
+  seed: 42
+  max_attempt_multiplier: 10
+  show_progress: true
+  metrics: ["macro_auroc", "macro_auprc"]
+  subgroups: ["all", "paired"]

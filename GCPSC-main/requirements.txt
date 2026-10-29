@@ -1,0 +1,12 @@
+
+torch==2.4.1
+torchvision==0.19.1
+transformers==4.47.1
+numpy==1.26.1
+pandas==2.2.3
+scikit-learn==1.2.2
+einops==0.6.1
+Pillow==11.0.0
+PyYAML==6.0.2
+tqdm==4.67.1
+tensorboardX==2.5.1  # optional: training curves

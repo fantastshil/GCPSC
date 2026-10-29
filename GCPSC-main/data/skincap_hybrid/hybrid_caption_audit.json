@@ -1,0 +1,168 @@
+{
+  "caption_source": "structured_plus_whitelist_clinical_v1",
+  "raw_source": "E:\\Dc\\datasets--joshuachou--SkinCAP\\snapshots\\4119044b3e14085d7439f88016d93376d433da5f\\skincap_v240623.csv",
+  "preserved_split_source": "E:\\Dc\\project\\GCPSC-main\\data\\skincap",
+  "caption_column": "caption_hybrid_en",
+  "uses_disease_to_generate_caption": false,
+  "excluded_input_fields": [
+    "disease",
+    "malignant",
+    "source",
+    "caption_zh",
+    "caption_zh_polish",
+    "caption_zh_polish_en",
+    "remark",
+    "Do not consider this image"
+  ],
+  "attribute_groups": {
+    "primary lesion morphology": [
+      "Vesicle",
+      "Papule",
+      "Macule",
+      "Plaque",
+      "Abscess",
+      "Pustule",
+      "Bulla",
+      "Patch",
+      "Nodule",
+      "Ulcer",
+      "Wheal",
+      "Cyst"
+    ],
+    "surface features": [
+      "Crust",
+      "Erosion",
+      "Excoriation",
+      "Atrophy",
+      "Exudate",
+      "Purpura/Petechiae",
+      "Fissure",
+      "Induration",
+      "Xerosis",
+      "Telangiectasia",
+      "Scale",
+      "Scar",
+      "Friable",
+      "Sclerosis",
+      "Comedo",
+      "Lichenification"
+    ],
+    "architectural features": [
+      "Pedunculated",
+      "Exophytic/Fungating",
+      "Warty/Papillomatous",
+      "Dome-shaped",
+      "Flat topped",
+      "Translucent",
+      "Umbilicated",
+      "Poikiloderma",
+      "Acuminate",
+      "Burrow"
+    ],
+    "color and pigmentation features": [
+      "Brown(Hyperpigmentation)",
+      "White(Hypopigmentation)",
+      "Purple",
+      "Yellow",
+      "Black",
+      "Erythema",
+      "Blue",
+      "Salmon",
+      "Gray",
+      "Pigmented"
+    ]
+  },
+  "whitelist_clinical_groups": {
+    "anatomical locations": [
+      "face",
+      "scalp",
+      "forehead",
+      "eyelid",
+      "periocular region",
+      "nose",
+      "mouth or lips",
+      "neck",
+      "chest",
+      "back",
+      "trunk",
+      "abdomen",
+      "groin",
+      "buttock",
+      "upper limb",
+      "arm",
+      "elbow",
+      "forearm",
+      "wrist",
+      "hand",
+      "palm",
+      "finger",
+      "lower limb",
+      "leg",
+      "thigh",
+      "knee",
+      "ankle",
+      "foot",
+      "sole",
+      "toe"
+    ],
+    "distribution and geometry": [
+      "solitary",
+      "multiple",
+      "clustered",
+      "scattered",
+      "diffuse",
+      "bilateral",
+      "symmetric",
+      "asymmetric",
+      "localized",
+      "linear",
+      "annular",
+      "irregular",
+      "well-demarcated",
+      "ill-defined"
+    ],
+    "size descriptors": [
+      "tiny",
+      "small",
+      "large",
+      "giant"
+    ],
+    "symptoms and course": [
+      "pruritic",
+      "painful",
+      "tender",
+      "burning",
+      "asymptomatic",
+      "acute",
+      "chronic",
+      "recurrent",
+      "progressive"
+    ]
+  },
+  "splits": {
+    "train": {
+      "rows": 1767,
+      "unique_captions": 1524,
+      "no_attribute_rows": 28,
+      "rows_with_whitelist_clinical_information": 1527,
+      "disease_name_leakage_rows": 0,
+      "output": "E:\\Dc\\project\\GCPSC-main\\data\\skincap_hybrid\\skincap_50_train_set.csv"
+    },
+    "val": {
+      "rows": 253,
+      "unique_captions": 248,
+      "no_attribute_rows": 2,
+      "rows_with_whitelist_clinical_information": 220,
+      "disease_name_leakage_rows": 0,
+      "output": "E:\\Dc\\project\\GCPSC-main\\data\\skincap_hybrid\\skincap_50_val_set.csv"
+    },
+    "test": {
+      "rows": 506,
+      "unique_captions": 460,
+      "no_attribute_rows": 10,
+      "rows_with_whitelist_clinical_information": 438,
+      "disease_name_leakage_rows": 0,
+      "output": "E:\\Dc\\project\\GCPSC-main\\data\\skincap_hybrid\\skincap_50_test_set.csv"
+    }
+  }
+}
